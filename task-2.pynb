@@ -1,0 +1,110 @@
+class StudentRegistration:
+    def __init__(self):
+        self.is_registered = False
+        self.holds = False
+        self.credit_limit = 18  # Maximum credit hours a student can register for
+        self.current_credits = 0
+        self.classes = {}  # Dictionary to store class names and sections
+
+    def open_student(self):
+        if not self.is_registered:
+            self.is_registered = True
+            print("Student registered with the university.")
+        else:
+            print("Student is already registered.")
+
+    def add_class(self, course_name, credit_hours, section):
+        if not self.is_registered:
+            print("Student is not registered. Cannot add class.")
+        elif self.holds:
+            print("A hold is placed on the student account. Cannot add class.")
+        elif self.current_credits + credit_hours > self.credit_limit:
+            print(f"Cannot register for {course_name}. Credit limit exceeded.")
+        else:
+            self.classes[course_name] = section
+            self.current_credits += credit_hours
+            print(f"Added class: {course_name}, Section: {section}, Credits: {credit_hours}. Total credits: {self.current_credits}.")
+
+    def drop_class(self, course_name):
+        if course_name in self.classes:
+            # Assume each course is 3 credits for simplicity
+            self.current_credits -= 3  # Adjust based on actual course credits in a real scenario
+            del self.classes[course_name]
+            print(f"Dropped class: {course_name}. Total credits: {self.current_credits}.")
+        else:
+            print(f"Cannot drop {course_name}. Student is not enrolled in the class.")
+
+    def transfer_section(self, course_name, new_section):
+        if course_name in self.classes:
+            self.classes[course_name] = new_section
+            print(f"Transferred to Section {new_section} for {course_name}.")
+        else:
+            print(f"Cannot transfer section. Student is not enrolled in {course_name}.")
+
+    def list_classes(self):
+        if not self.classes:
+            print("No classes registered.")
+        else:
+            print("Registered classes and sections:")
+            for course, section in self.classes.items():
+                print(f"Class: {course}, Section: {section}")
+    
+    def place_hold(self):
+        self.holds = True
+        print("Hold placed on student account.")
+
+    def remove_hold(self):
+        self.holds = False
+        print("Hold removed from student account.")
+
+    def graduate_student(self):
+        if self.is_registered:
+            self.is_registered = False
+            self.current_credits = 0
+            self.classes.clear()
+            print("Student has graduated and is no longer registered.")
+        else:
+            print("Student is not registered.")
+
+# Testing the StudentRegistration class
+
+# Create a student registration instance
+student = StudentRegistration()
+
+# Test cases
+# Registering the student
+student.open_student()
+
+# Adding classes
+student.add_class("Math 101", 3, "A")
+student.add_class("History 201", 3, "B")
+
+# Listing classes
+student.list_classes()
+
+# Transferring section
+student.transfer_section("Math 101", "C")
+
+# Placing a hold and trying to add a class
+student.place_hold()
+student.add_class("Science 102", 4, "A")
+
+# Removing the hold and adding the class
+student.remove_hold()
+student.add_class("Science 102", 4, "A")
+
+# Dropping a class
+student.drop_class("History 201")
+
+# Trying to exceed credit limit
+student.add_class("Physics 301", 5, "A")
+student.add_class("Chemistry 101", 4, "B")
+
+# Listing final classes
+student.list_classes()
+
+# Graduating the student
+student.graduate_student()
+
+# Trying to add a class after graduation
+student.add_class("Math 101", 3, "A")
